@@ -1,0 +1,11 @@
+{
+  "name": "color-name-atlas",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "@swc/core": "1.16.22",
+    "lightningcss": "1.33.0"
+  }
+}

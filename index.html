@@ -1,0 +1,78 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore the 148 named CSS colors by name, family, hue, and more.">
+  <meta name="color-scheme" content="light dark">
+  <title>Color Name Atlas</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!document.documentElement.hasAttribute("data-atlas-ready")) {
+        document.getElementById("explorer").hidden = true;
+        document.getElementById("load-error").hidden = false;
+      }
+    });
+  </script>
+  <script defer src="colors.js"></script>
+  <script defer src="map.js"></script>
+  <script defer src="atlas.js"></script>
+</head>
+<body>
+  <header class="mast"><div class="wrap mast-inner">
+    <div class="byline">
+      <button class="brand" popovertarget="author-links"><i class="mark" aria-hidden="true"></i>A weekend expedition · Amnon Sadeh<span aria-hidden="true">▾</span></button>
+      <nav id="author-links" popover aria-label="Project and author links">
+        <a href="https://github.com/targumon/color-name-atlas">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 0a8 8 0 0 0-2.5 15.6q.6 0 .5-.4v-1.5c-2 .4-2.5-.5-2.7-1 0-.1-.5-.9-.8-1-.3-.2-.7-.6 0-.6s1 .6 1.2.8c.7 1.2 1.9 1 2.4.7q0-.8.5-1c-1.8-.3-3.7-1-3.7-4q0-1.3.8-2.2c0-.2-.3-1 .1-2 0 0 .7-.3 2.2.7a8 8 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.5 1.1.2 2 .1 2.1q.8.9.8 2.2c0 3-1.9 3.7-3.6 4q.5.3.5 1.4v2.2q0 .4.5.4A8 8 0 0 0 16 8a8 8 0 0 0-8-8"/></svg>
+          GitHub repo
+        </a>
+        <a href="https://x.com/amnonsadeh" rel="me">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.9 2h3.4l-7.4 8.5L23.6 22h-6.8l-5.3-7-6.1 7H2l7.9-9.1L1.5 2h7l4.8 6.4zm-1.2 18h1.9L7.5 3.9h-2z"/></svg>
+          Twitter
+        </a>
+        <a href="https://www.linkedin.com/in/targumon/" rel="me">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.5 20.5h-3.6v-5.6c0-1.4 0-3-1.9-3S13 13.2 13 14.7v5.6H9.3V9h3.5v1.6a4 4 0 0 1 3.4-1.9c3.6 0 4.3 2.4 4.3 5.5zM5.3 7.5a2 2 0 1 1 0-4.2 2 2 0 0 1 0 4.1m1.8 13H3.5V9h3.6zM22.2 0H1.8Q.2.2 0 1.7v20.6q.2 1.6 1.8 1.7h20.4q1.7-.2 1.8-1.7V1.7Q23.8.1 22.2 0"/></svg>
+          LinkedIn
+        </a>
+      </nav>
+    </div>
+    <div class="preferences">
+      <label>Spelling <select id="spelling"><option value="Gray">Gray</option><option value="Grey">Grey</option><option value="Both">Both</option></select></label>
+      <button class="theme" id="motion" aria-pressed="true">Motion on</button>
+      <button id="theme" class="theme" aria-label="Switch theme">◐ <span>Theme</span></button>
+    </div>
+  </div></header>
+  <main class="wrap">
+    <section class="hero">
+      <div><h1>Color Name Atlas<span>.</span></h1><p>Explore the names, families, and relationships behind the <a href="https://www.w3.org/TR/css-color-4/#named-colors">148 named CSS colors</a>.</p>
+        <p class="screen-note">The atlas is easier to explore on a larger display.</p>
+      </div>
+      <div class="deck" aria-label="Featured colors">
+        <button data-color="Coral" style="--ink:Coral"><b>Coral</b></button>
+        <button data-color="Khaki" style="--ink:Khaki"><b>Khaki</b></button>
+        <button data-color="Plum" style="--ink:Plum"><b>Plum</b></button>
+      </div>
+    </section>
+    <noscript><p>Enable JavaScript to explore the atlas.</p></noscript>
+    <p class="error" id="load-error" hidden>The atlas couldn't load. <a href="">Reload the page</a> to try again.</p>
+    <div id="explorer" hidden>
+      <section class="controls" aria-label="Explore colors">
+        <label class="search"><i aria-hidden="true"></i><input id="search" type="search" placeholder="Find a color…" aria-label="Find a color by name or hex"></label>
+        <div id="presets" aria-label="Grouping presets"></div>
+      </section>
+      <div class="results-head"><h2 id="view-title">Alphabetical</h2><span id="count" role="status"></span></div>
+      <p class="view-note" id="hue-note" hidden>Hue groups use named reference colors. Green and Lime share a hue, so lightness separates them.</p>
+      <p class="view-note" id="history-note" hidden>The VGA swatches are paired dark to light. Orange appears in the SVG palette and was also the 17th keyword in CSS 2.1. Choose Both spellings to see all 148 names.</p>
+      <p class="view-note" id="space-note" hidden>Lighter colors sit higher. More colorful shades sit farther right. Dots show their own hue, and fine lines mark exact positions where swatches overlap.</p>
+      <p class="view-note" id="families-note" hidden>Dashed lines connect different families. Hover, focus, or press and hold a name to trace its links.</p>
+      <div id="world"><div id="regions"></div><svg id="edges" aria-hidden="true"></svg><div id="points"></div><output id="space-readout" hidden aria-live="off"></output></div>
+    </div>
+  </main>
+  <dialog id="detail" aria-labelledby="detail-name">
+    <div id="sample"><button id="close" aria-label="Close color details"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m4 4 8 8 M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button></div>
+    <div class="detail-body"><h2 id="detail-name" tabindex="-1"></h2><p id="meta"></p><p id="connections"></p><div class="actions"><button id="copy">Copy hex</button><button id="near">Find similar</button></div><span id="notice" role="status"></span></div>
+  </dialog>
+</body>
+</html>
