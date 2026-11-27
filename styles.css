@@ -118,7 +118,7 @@ noscript,.error { color:firebrick; }
 #world[data-layout=space] .chip { width:clamp(9px,2.1cqw,16px); height:clamp(9px,2.1cqw,16px); min-height:0; padding:0; font-size:0; line-height:0; border:1px solid color-mix(in srgb,var(--ink) 70%,transparent); border-radius:50%; }
 #world[data-layout=space] .chip:is(:hover,:focus-visible) { outline:2px solid var(--ink); outline-offset:1px; }
 #space-readout { position:absolute; inset:auto 0 4px; text-align:center; font-size:.875rem; }
-.map-empty { position:absolute; margin:8px; background:var(--paper); }
+.map-empty { position:absolute; margin:8px; }
 #connections { color:var(--soft); font-size:.875rem; margin-top:8px; }
 @media(max-width:700px) {
   .mast-inner { height:auto; min-height:58px; flex-wrap:wrap; gap:5px 12px; padding-block:6px; }
