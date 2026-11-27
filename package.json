@@ -7,8 +7,5 @@
   "devDependencies": {
     "@swc/core": "1.16.22",
     "lightningcss": "1.33.0"
-  },
-  "dependencies": {
-    "posthog-js": "^1.455.4"
   }
 }

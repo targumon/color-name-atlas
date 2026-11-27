@@ -2,7 +2,6 @@
 
 const $ = id => document.getElementById(id);
 const capture = (event, properties) => window.posthog?.capture(event, properties);
-const logAtlas = (message, attributes) => window.posthog?.logger?.info(message, attributes);
 function el(tag, text, className) {
   const node = document.createElement(tag);
   if (text !== undefined) node.textContent = text;
@@ -162,7 +161,6 @@ function visitCategories() {
 function showDetail(c, source="atlas"){
   selected=c;
   capture("color_detail_opened", {color_name: c.name, source});
-  logAtlas("color detail opened", {event: "color_detail_opened", color_name: c.name, source});
   $("sample").style.backgroundColor=c.name;
   $("detail-name").textContent=c.name;
   const meta = $("meta");
@@ -218,12 +216,13 @@ $("detail").onclick=e=>{
 };
 $("near").onclick=()=>{
   anchor=selected; mode="Nearest neighbors"; $("search").value="";
+  capture("atlas_view_selected", {view: mode, source: "color_detail"});
   capture("similar_colors_viewed", {color_name: selected.name});
   $("detail").close();render(true);$("view-title").scrollIntoView({block:"start"});
   $("view-title").querySelector("select").focus({preventScroll:true});
 };
 $("copy").onclick=async()=>{
-  try{await navigator.clipboard.writeText(selected.hex);capture("hex_copied", {color_name: selected.name});logAtlas("hex copied", {event: "hex_copied", color_name: selected.name});$("notice").textContent="Hex copied";}
+  try{await navigator.clipboard.writeText(selected.hex);capture("hex_copied", {color_name: selected.name});$("notice").textContent="Hex copied";}
   catch{$("notice").textContent="Select and copy "+selected.hex;}
 };
 const scheme=matchMedia("(prefers-color-scheme:dark)");
