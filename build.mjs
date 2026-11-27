@@ -3,7 +3,8 @@ import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { minify } from "@swc/core";
 import { transform } from "lightningcss";
 
-const html = await readFile("index.html", "utf8");
+const sourceDir = new URL("./src/", import.meta.url);
+const html = await readFile(new URL("index.html", sourceDir), "utf8");
 const envFile = await readFile(".env", "utf8").catch(() => "");
 const env = Object.fromEntries(envFile.split(/\r?\n/).flatMap(line => {
   const match = line.match(/^([A-Z0-9_]+)=(.*)$/);
@@ -26,11 +27,11 @@ const scripts = [...html.matchAll(/<script defer src="([^"]+)"><\/script>/g)];
 const stylesheet = html.match(/<link rel="stylesheet" href="([^"]+)">/);
 if (!scripts.length || !stylesheet) throw new Error("Missing atlas scripts or stylesheet in index.html");
 
-const sources = await Promise.all(scripts.map(([, file]) => readFile(file, "utf8")));
+const sources = await Promise.all(scripts.map(([, file]) => readFile(new URL(file, sourceDir), "utf8")));
 const js = await minify(['"use strict";', ...sources].join("\n;\n"), { module: false, ecma: 2022 });
 const css = transform({
   filename: stylesheet[1],
-  code: Buffer.from((await readFile(stylesheet[1], "utf8")).replace(/^\uFEFF/, "")),
+  code: Buffer.from((await readFile(new URL(stylesheet[1], sourceDir), "utf8")).replace(/^\uFEFF/, "")),
   minify: true
 });
 
