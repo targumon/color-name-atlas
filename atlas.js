@@ -1,6 +1,8 @@
 ﻿"use strict";
 
 const $ = id => document.getElementById(id);
+const capture = (event, properties) => window.posthog?.capture(event, properties);
+const logAtlas = (message, attributes) => window.posthog?.logger?.info(message, attributes);
 function el(tag, text, className) {
   const node = document.createElement(tag);
   if (text !== undefined) node.textContent = text;
@@ -154,10 +156,13 @@ function visitCategories() {
   $("detail").close();
   mode = "Categories";
   $("search").value = "";
+  capture("atlas_view_selected", {view: mode, source: "color_detail"});
   render(true);
 }
-function showDetail(c){
+function showDetail(c, source="atlas"){
   selected=c;
+  capture("color_detail_opened", {color_name: c.name, source});
+  logAtlas("color detail opened", {event: "color_detail_opened", color_name: c.name, source});
   $("sample").style.backgroundColor=c.name;
   $("detail-name").textContent=c.name;
   const meta = $("meta");
@@ -166,13 +171,13 @@ function showDetail(c){
     meta.append(" · ", mode === "Categories" ? category : detailLink(category, visitCategories));
   }
   for (const twin of byHex.get(c.hex).filter(t => t !== c && spellingAllows(t))) {
-    meta.append(" · Also ", detailLink(twin.name, () => showDetail(twin)));
+    meta.append(" · Also ", detailLink(twin.name, () => showDetail(twin, "alias")));
   }
   const related=[...neighbors.get(c.name)].filter(n=>spellingAllows(byName.get(n)));
   const connections = $("connections");
   connections.replaceChildren();
   related.forEach((name, index) => {
-    connections.append(index ? ", " : "Related to ", detailLink(name, () => showDetail(byName.get(name))));
+    connections.append(index ? ", " : "Related to ", detailLink(name, () => showDetail(byName.get(name), "related_color")));
   });
   $("notice").textContent="";
   if ($("detail").open) $("detail-name").focus();
@@ -200,11 +205,11 @@ function render(animate=false){
 }
 for(const label of modes){
   const button=el("button",label);
-  button.onclick=()=>{if(label!==mode){mode=label;render(true);}};
+  button.onclick=()=>{if(label!==mode){mode=label;capture("atlas_view_selected", {view: mode, source: "preset"});render(true);}};
   $("presets").append(button);
 }
 $("search").oninput=()=>render();
-document.querySelectorAll("[data-color]").forEach(n=>n.onclick=()=>showDetail(byName.get(n.dataset.color)));
+document.querySelectorAll("[data-color]").forEach(n=>n.onclick=()=>showDetail(byName.get(n.dataset.color), "featured_color"));
 $("close").onclick=()=>$("detail").close();
 $("detail").onclick=e=>{
   if(e.target!==$("detail")) return;
@@ -213,11 +218,12 @@ $("detail").onclick=e=>{
 };
 $("near").onclick=()=>{
   anchor=selected; mode="Nearest neighbors"; $("search").value="";
+  capture("similar_colors_viewed", {color_name: selected.name});
   $("detail").close();render(true);$("view-title").scrollIntoView({block:"start"});
   $("view-title").querySelector("select").focus({preventScroll:true});
 };
 $("copy").onclick=async()=>{
-  try{await navigator.clipboard.writeText(selected.hex);$("notice").textContent="Hex copied";}
+  try{await navigator.clipboard.writeText(selected.hex);capture("hex_copied", {color_name: selected.name});logAtlas("hex copied", {event: "hex_copied", color_name: selected.name});$("notice").textContent="Hex copied";}
   catch{$("notice").textContent="Select and copy "+selected.hex;}
 };
 const scheme=matchMedia("(prefers-color-scheme:dark)");
@@ -232,6 +238,7 @@ function applyTheme(){
 $("theme").onclick=()=>{
   preference=document.documentElement.dataset.theme==="dark"?"light":"dark";
   try{localStorage.setItem("atlas-theme",preference);}catch{}
+  capture("theme_preference_changed", {theme: preference});
   applyTheme();
 };
 scheme.addEventListener("change",applyTheme);applyTheme();
@@ -240,6 +247,7 @@ $("spelling").onchange=()=>{
   spelling=$("spelling").value;
   if(!spellingAllows(anchor)) anchor=byHex.get(anchor.hex).find(spellingAllows);
   try{localStorage.setItem("atlas-spelling",spelling);}catch{}
+  capture("spelling_preference_changed", {spelling});
   render(true);
 };
 $("explorer").hidden=false;
